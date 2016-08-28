@@ -1,0 +1,40 @@
+function stripComments(src)
+	src = src .. "\n"
+	local stopComment = nil
+	local out = ""
+	while #src > 0 do
+		local text1, comment1, rest1 = src:match("^(.-)//(.-)\n(.*)$")
+		local text2, comment2, rest2 = src:match("^(.-)/*(.-)*/(.*)$")
+		if text1 and text2 then
+			if #text1 < #text2 then
+				out = out .. text1 .. " "
+				src = rest1
+			else
+				out = out .. text2 .. " "
+				src = rest2
+			end
+		elseif text1 then
+			out = out .. text1 .. " "
+			src = rest1
+		elseif text2 then
+			out = out .. text2 .. " "
+			src = rest2
+		else
+			out = out .. src
+			return out
+		end
+	end
+	return out
+end
+
+local fileName = arg[1]
+if not fileName then
+	return print("usage:\n\tlua compiler.lua <file.c>")
+end
+local file = io.open(fileName)
+if not file then
+	return print("no such file `" .. fileName .. "`")
+end
+
+local data = file:read("*all")
+print(stripComments(data))
