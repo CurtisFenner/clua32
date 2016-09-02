@@ -8,6 +8,9 @@ function Stream(list, off)
 		size = function(self)
 			return #list - off
 		end,
+		location = function(self)
+			return "`" .. self[1] .. "`" .. " on line ???"
+		end,
 	}, {
 		__index = function(self, key)
 			return list[key + off]
