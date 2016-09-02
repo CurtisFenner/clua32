@@ -20,6 +20,13 @@ function index.parse(p, stream)
 	return p._fun(stream)
 end
 
+-- the parser is required (an error is raised upon failure to parse)
+function index.required(self, message)
+	return self + parser(function(text)
+		error(message .. "\nnear " .. text:location())
+	end)
+end
+
 -- map( P[A], A->B ) --> P[B}
 function index.map(p, fun)
 	return parser(function(stream)
@@ -103,6 +110,19 @@ end
 function peg.eof()
 	local p = parser(function() return false end)
 	p._eof = true
+	return p
+end
+
+function peg.pointer()
+	local p = parser(function()
+		error("this pointer parser has not been pointed", 2)
+	end)
+	p._pointed = false
+	p.point = function(self, other)
+		assert(not self._pointed, "this pointer has already been pointed")
+		self._pointed = true
+		self._fun = other._fun
+	end
 	return p
 end
 
