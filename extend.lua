@@ -21,3 +21,9 @@ function string.explode(str)
 	end
 	return out
 end
+
+setmetatable(_G, {
+	__index = function(_, key)
+		error("use of undefined variable `" .. key .. "`", 2)
+	end,
+})
