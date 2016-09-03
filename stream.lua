@@ -9,11 +9,29 @@ function Stream(list, off)
 			return #list - off
 		end,
 		location = function(self)
-			return "`" .. self[1] .. "`" .. " on line ???"
+			if self:size() == 0 then
+				return "<eof>"
+			end
+			local out = {}
+			for i = 1, self:size() do
+				table.insert(out, self[i])
+			end
+			local str = table.concat(out, " ")
+			if #str > 20 then
+				str = str:sub(1, 20) .. "..."
+			end
+			return "`" .. str .. "`" .. " on line ???"
 		end,
 	}, {
 		__index = function(self, key)
 			return list[key + off]
+		end,
+		__tostring = function(self)
+			local list = {}
+			for i = 1, self:size() do
+				list[i] = self[i]
+			end
+			return "Stream{\"" .. table.concat(list, '", "') .. '"}'
 		end,
 	})
 end
