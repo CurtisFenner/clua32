@@ -1,5 +1,6 @@
 local peg = require("./peg")
 local Stream = require("./stream")
+local grammar = require("./cgrammar")
 
 local operators = {
 	"{", "}", ";",
@@ -55,6 +56,9 @@ end
 
 function compile(contents)
 	local tokens = splitTokens(contents)
+	local program, rest = grammar.program:parse(Stream(tokens))
+	print(program, rest)
+	print(">>>", program.definitions)
 end
 
 return compile
